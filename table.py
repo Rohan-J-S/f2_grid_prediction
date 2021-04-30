@@ -1,6 +1,7 @@
 import sqlite3
 base = sqlite3.connect("test.db")
 c = base.cursor()
+from time import sleep
 
 # c.execute("""CREATE TABLE fp1_1( 
 #     driver text,
@@ -47,7 +48,8 @@ c = base.cursor()
 
 # c.execute("INSERT INTO fp2 VALUES ('verstappen','red bull racing honda' , 88.6 , 'soft' , 31 , 8 )")
 
-# c.execute("INSERT INTO fp3_1 VALUES ('verstappen','red bull racing honda' , 88.2 , 'medium' , 31 , 8 )")
+# c.execute("INSERT INTO fp3_1 VALUES ('verstappen','red bull racing honda' , 88.2 , 'medium' , 31 , 8 ),
+# ")
 
 
 # c.execute("INSERT INTO previous_starting_positions_2 VALUES ('verstappen','bahrain gp',1 ),('verstappen' , 'imola gp' , 3),('perez','bahrain gp',11 ),('perez' , 'imola gp' , 2)") 
@@ -97,13 +99,16 @@ for x in d_avg_pos:
         d_q2_compounds[x] = "soft"
     elif d_avg_pos[x] > 15:
         d_q2_compounds[x] = "dnq"
-    else:
+    elif d_avg_pos <= 3:
         d_q2_compounds[x] = "medium"
+    else:
+        d_q2_compounds[x] = "medium/hard"
 print(d_q2_compounds)
 
 #lap time calculation on softs for most racers +0.9 for mediums and +1.6 for hard
 drivers_list = []
 lap_times_list = []  #for easy sorting while calling funcs q1 q2 and q3
+
 for x in range(len(rows_fp1)):
     count = 0
     name = rows_fp1[x][0]
@@ -133,6 +138,68 @@ for x in range(len(rows_fp1)):
     drivers_list += [name]
     lap_times_list += [lap_time]
 print(drivers_list,lap_times_list)
+
+original_lap_times_list = lap_times_list
+original_drivers_list = drivers_list
+
+def bubble_sort(l,l2):
+    for y in range(len(l)):
+        for x in range(len(l)):
+            if x != len(l) - 1:
+                if l[x+1] < l[x]:
+                    l[x+1],l[x] = l[x],l[x+1]  
+                    l2[x+1],l2[x] = l2[x],l2[x+1]   
+    return (l,l2)
+
+
+def q1():
+    for x in range(len(drivers_list)):
+        if d_avg_pos[drivers_list[x]] >= 12:
+            pass #predicted to run on softs
+        elif d_avg_pos[drivers_list[x]] in range(6,12):
+            lap_times_list[x] += 0.9 #predicted medium tyres
+        else:
+            lap_times_list[x] += 1.6
+
+    temp = bubble_sort(lap_times_list,drivers_list)
+    lap_times_list = temp[0]
+    print("Q1 is starting 5 drivers will be eliminated......")
+    sleep(5)
+
+    for x in range(len(lap_times_list)-1,len(lap_times_list)-6,-1):
+        print( x+1 , drivers_list[x] )
+    print(" have been eliminated ")
+
+def q2():
+    for x in range(len(drivers_list)-5):
+        if d_avg_pos[drivers_list[x]] >= 7:
+            pass #predicted to run on softs
+        elif d_avg_pos[drivers_list[x]] in range(4,7):
+            lap_times_list[x] += 0.9 #predicted medium tyres
+        else:
+            lap_times_list[x] += 1.3 #predicted hard tyres or medium tyre
+
+    temp = bubble_sort(lap_times_list[0:15],drivers_list[0:15])
+    lap_times_list = temp[0]
+    print("Q2 is starting 5 drivers will be eliminated......")
+    sleep(5)
+
+    for x in range(len(lap_times_list)-6,len(lap_times_list)-11,-1):
+        print( x+1 , drivers_list[x] )
+    print(" have been eliminated ")
+
+def q3():
+  
+    temp = bubble_sort(lap_times_list[0:10],drivers_list[0:10])
+    lap_times_list = temp[0]
+    print("Q3 is starting.........")
+    sleep(5)
+
+    for x in range(len(lap_times_list)-11,len(lap_times_list)-16,-1):
+        print( x+1 , drivers_list[x] )
+    
+
+    
 
 
 # fp1_1 = float(input("..")) #to be taken from database table
