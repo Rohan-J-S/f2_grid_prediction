@@ -188,20 +188,24 @@ print()
 #average starting grid pos calculation
 d_avg_pos = {}
 for x in range(len(rows_previous_grid)):
+    print(d_avg_pos)
     if x == 0:
         temp = 0
         name = rows_previous_grid[0][0]
-        temp += rows_previous_grid[x][2]
+        temp = rows_previous_grid[x][2]
+        d_avg_pos[name] = temp/2
     elif x == len(rows_previous_grid)-1:
         temp += rows_previous_grid[x][2]
         d_avg_pos[name] = temp/2
-    elif name != rows_previous_grid[x]:
-        d_avg_pos[name] = temp/2
+    elif name == rows_previous_grid[x][0]:
         name = rows_previous_grid[x][0]
         temp = rows_previous_grid[x][2]
+        d_avg_pos[name] += temp/2
     else:
-        temp += rows_previous_grid[x][2]
-    print(temp/2)
+        name = rows_previous_grid[x][0]
+        temp = rows_previous_grid[x][2]
+        d_avg_pos[name] = temp/2
+    
 print()
 print(d_avg_pos)
 
@@ -210,7 +214,7 @@ for x in d_avg_pos:
     if d_avg_pos[x] > 6 and d_avg_pos[x] <= 15:
         d_q2_compounds[x] = "soft"
     elif d_avg_pos[x] > 15:
-        d_q2_compounds[x] = "dnq"
+        d_q2_compounds[x] = "soft"
     elif d_avg_pos[x] <= 3:
         d_q2_compounds[x] = "medium/hard"
     else:
@@ -315,13 +319,20 @@ def q3():
     print("Q3 is starting.........")
     sleep(1)
 
-    for x in range(len(lap_times_list)-11,len(lap_times_list)-16,-1):
+    for x in range(len(lap_times_list)-1,len(lap_times_list)-11,-1):
         print( x+1 , drivers_list[x] )
 
 q1()
+drivers_list = drivers_list[0:15]
 q2()
+drivers_list = drivers_list[0:10]
 q3()
+print()
+print()
     
+print("predicted starting tyre compounds")
+for x in d_q2_compounds:
+    print(x, ":" , d_q2_compounds[x])
 
     
 
